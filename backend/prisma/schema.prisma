@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Service {
+  id              String    @id @default(uuid())
+  name            String
+  description     String?
+  price           Float
+  durationMinutes Int
+  maxParticipants Int        @default(1)
+  category        String     // "RIDING", "LESSON", "TOUR"
+  isActive        Boolean    @default(true)
+  timeSlots       TimeSlot[]
+  bookings        Booking[]
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  @@map("services")
+}
+
+model TimeSlot {
+  id             String    @id @default(uuid())
+  serviceId      String
+  service        Service   @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  startTime      DateTime
+  endTime        DateTime
+  availableSpots Int
+  isBookable     Boolean   @default(true)
+  bookings       Booking[]
+  createdAt      DateTime  @default(now())
+
+  @@map("time_slots")
+  
+  @@index([serviceId])
+  @@index([startTime])
+}
+
+model Booking {
+  id              String    @id @default(uuid())
+  guestEmail      String
+  guestName       String?
+  guestPhone      String?
+  timeSlotId      String
+  timeSlot        TimeSlot  @relation(fields: [timeSlotId], references: [id], onDelete: Cascade)
+  serviceId       String
+  service         Service   @relation(fields: [serviceId], references: [id])
+  participantCount Int      @default(1)
+  totalPrice      Float
+  status          String    @default("CONFIRMED") // PENDING, CONFIRMED, CANCELLED, COMPLETED
+  specialRequests String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@map("bookings")
+  
+  @@index([guestEmail])
+  @@index([timeSlotId])
+  @@index([status])
+}

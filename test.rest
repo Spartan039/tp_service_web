@@ -1,0 +1,40 @@
+### Test de santé du serveur
+GET http://localhost:3000/api/health
+
+### Route de test
+GET http://localhost:3000/api/test
+
+### Récupérer tous les services
+GET http://localhost:3000/api/services
+
+### Récupérer un service spécifique (remplacer :id par un vrai ID)
+GET http://localhost:3000/api/services/:id
+
+### Récupérer les disponibilités pour un service
+GET http://localhost:3000/api/availability/service/:serviceId
+
+### Récupérer les disponibilités pour un service avec une date spécifique
+GET http://localhost:3000/api/availability/service/:serviceId?date=2024-01-15&days=14
+
+### Récupérer le calendrier mensuel
+GET http://localhost:3000/api/availability/calendar/2024/1
+
+### Créer une réservation
+POST http://localhost:3000/api/bookings
+Content-Type: application/json
+
+{
+    "timeSlotId": "00000000-0000-0000-0000-000000000000",
+    "serviceId": "00000000-0000-0000-0000-000000000000",
+    "guestEmail": "test@example.com",
+    "guestName": "John Doe",
+    "guestPhone": "+-1234567890",
+    "participantCount": 2,
+    "specialRequests": "Besoin d'un casque pour enfant"
+}
+
+### Récupérer les réservations par email
+GET http://localhost:3000/api/bookings/email/test@example.com
+
+### Annuler une réservation
+PATCH http://localhost:3000/api/bookings/:id/cancel/test@example.com
